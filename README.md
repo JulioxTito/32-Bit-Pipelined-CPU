@@ -3,10 +3,10 @@
 
 ## Overview
 
-A synchronous 32 bit processor execution core modeled in SystemVerilog, compiled and synthesized using Intel Quartus Prime, and physically verified on an Altera Cyclone IV E FPGA using the Terasic DE2 115 development board[cite: 25, 27, 28, 30].
+A synchronous 32 bit processor execution core modeled in SystemVerilog, compiled and synthesized using Intel Quartus Prime, and physically verified on an Altera Cyclone IV E FPGA using the Terasic DE2 115 development board.
 
 
-The project implements an R type RISC datapath architecture featuring a dual read multiport register file, a dedicated arithmetic functional unit, and an active low seven segment output decoder for real time hardware telemetry[cite: 12, 13, 27, 28].
+The project implements an R type RISC datapath architecture featuring a dual read multiport register file, a dedicated arithmetic functional unit, and an active low seven segment output decoder for real time hardware telemetry.
 
 
 ## Architectural Modules
@@ -14,49 +14,68 @@ The project implements an R type RISC datapath architecture featuring a dual rea
 The design is organized into modular SystemVerilog blocks instantiated within a structural top level wrapper:
 
 
-* Register File (register_file.sv): Contains 32 general purpose 32 bit registers[cite: 10, 27]. Features dual asynchronous read ports (RD1, RD2) for immediate source operand fetch and a single synchronous write port (WD3) clocked on the rising edge[cite: 10, 27]. Includes active high synchronous reset logic that initializes register values to their index for simulation validation[cite: 27].
+* Register File (register_file.sv): Contains 32 general purpose 32 bit registers. Features dual asynchronous read ports (RD1, RD2) for immediate source operand fetch and a single synchronous write port (WD3) clocked on the rising edge. Includes active high synchronous reset logic that initializes register values to their index for simulation validation.
 
 
-* Arithmetic Logic Unit (ALU.sv): Performs 32 bit arithmetic operations driven by a 3 bit control word[cite: 10, 28]. Decodes control signals to execute addition (010) or subtraction (110) while driving results directly to the datapath write back bus[cite: 10, 13, 28].
+* Arithmetic Logic Unit (ALU.sv): Performs 32 bit arithmetic operations driven by a 3 bit control word. Decodes control signals to execute addition (010) or subtraction (110) while driving results directly to the datapath write back bus.
 
 
-* Top Level Integration (top.sv): Coordinates signal buses between the register file and the ALU core[cite: 11, 20]. Maps input control lines from physical board switches to trigger instruction operations and routes register output to the display subsystem[cite: 20, 27, 28, 30].
+* Top Level Integration (top.sv): Coordinates signal buses between the register file and the ALU core. Maps input control lines from physical board switches to trigger instruction operations and routes register output to the display subsystem.
 
 
-* Display Subsystem (display.sv): Decodes internal binary bus values into active low seven segment representations to display register probe values directly on physical board hardware[cite: 14, 22, 27].
+* Display Subsystem (display.sv): Decodes internal binary bus values into active low seven segment representations to display register probe values directly on physical board hardware.
 
 
-## Instruction Set Execution
+## Functional Verification and Waveforms
 
-The datapath implements R type single cycle instruction operations:
-
-
-* ADD (Control 3'b010): Reg[rs] plus Reg[rt] written back into Reg[rd]. Dual register read, 32 bit integer addition, register write back[cite: 9, 13, 28].
+Functional simulation was executed using ModelSim to validate instruction decoding, register read latency, and ALU arithmetic correctness:
 
 
-* SUB (Control 3'b110): Reg[rs] minus Reg[rt] written back into Reg[rd]. Dual register read, 32 bit integer subtraction, register write back[cite: 10, 13, 28].
+<p align="center">
+  <img src="media/simulation_waveforms.png" alt="ModelSim Functional Simulation Waveform" width="95%">
+  <br>
+  <em>ModelSim timing waveform verifying switch trigger inputs, register reads, and ALU outputs for addition (7) and subtraction (2).</em>
+</p>
 
 
-## Functional Verification
-
-Simulation and physical hardware validation were performed to confirm arithmetic correctness:
+* ADD Verification: Reading Register 5 and Register 2 properly triggers the ALU add path, outputting 7 and verifying write back stability.
 
 
-* ModelSim Waveform Simulation: Verified timing response across back to back operation switching[cite: 29]. Confirmed that loading source registers 5 and 2 with an ADD instruction drives 7 to the write register bus, and loading source registers 5 and 3 with a SUB instruction drives 2 without logic glitching[cite: 14, 29].
+* SUB Verification: Reading Register 5 and Register 3 routes through the ALU subtraction path, outputting 2 without bus race conditions.
 
 
-* FPGA Physical Bring Up: Successfully routed, compiled, and programmed onto the Altera Cyclone IV E EP4CE115 device[cite: 30]. Arithmetic execution was verified on the physical test bench using onboard toggles and monitored directly through the seven segment output LEDs[cite: 30, 31, 32].
+## FPGA Physical Bring Up and Pin Mapping
+
+The design was synthesized in Quartus Prime Lite Edition and mapped to the onboard peripherals of the Altera Cyclone IV E FPGA:
 
 
-## EDA Tools and Target Hardware
-
-* Hardware Description Language: SystemVerilog[cite: 25, 27]
-
-
-* Synthesis and Implementation: Intel Quartus Prime Lite Edition[cite: 28]
-
-
-* Functional Simulation: ModelSim Altera Edition[cite: 29]
+<p align="center">
+  <img src="media/pin_assignments.png" alt="Quartus Pin Assignments" width="85%">
+  <br>
+  <em>Physical pin planning in Quartus mapping board clock, active high reset, instruction switches, and seven segment LED busses.</em>
+</p>
 
 
-* Target Silicon: Altera Cyclone IV E (EP4CE115F29C7) on Terasic DE2 115[cite: 4, 30]
+Hardware execution was validated live on bench silicon using onboard switches and observing decoded output on seven segment indicators:
+
+
+<p align="center">
+  <img src="media/fpga_add_validation.png" alt="FPGA Hardware Verification ADD" width="45%">
+  <img src="media/fpga_sub_validation.png" alt="FPGA Hardware Verification SUB" width="45%">
+  <br>
+  <em>Hardware bench results on Terasic DE2 115 board validating real time execution: ADD (5 + 2 = 7) and SUB (5 - 3 = 2).</em>
+</p>
+
+
+## EDA Tools and Target Silicon
+
+* Hardware Description Language: SystemVerilog
+
+
+* Synthesis and Implementation: Intel Quartus Prime Lite Edition
+
+
+* Functional Simulation: ModelSim Altera Edition
+
+
+* Target Silicon: Altera Cyclone IV E (EP4CE115F29C7) on Terasic DE2 115
