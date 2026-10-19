@@ -1,4 +1,4 @@
-# 32 Bit RISC Datapath and ALU Execution Core
+# 32 Bit RISC Datapath and ALU Execution Core (Verilog)
 
 
 ## Overview
