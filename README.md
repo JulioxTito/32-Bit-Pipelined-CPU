@@ -1,5 +1,13 @@
 # 32 Bit RISC Datapath and ALU Execution Core (Verilog)
 
+<p align="left">
+  <img src="https://img.shields.io/badge/HDL-SystemVerilog-1b365d?style=for-the-badge&logo=code" alt="SystemVerilog">
+  <img src="https://img.shields.io/badge/EDA-Intel_Quartus_Prime-0071c5?style=for-the-badge&logo=intel" alt="Intel Quartus Prime">
+  <img src="https://img.shields.io/badge/Target_Silicon-Cyclone_IV_EP4CE-green?style=for-the-badge" alt="Target FPGA">
+  <img src="https://img.shields.io/badge/Physical_Bringup-Verified-success?style=for-the-badge" alt="Bringup Status">
+</p>
+
+
 
 ## Overview
 
